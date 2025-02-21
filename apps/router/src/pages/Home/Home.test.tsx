@@ -1,44 +1,39 @@
 import React from 'react';
-import {
-  act,
-  render,
-  screen,
-  userEvent,
-  waitFor,
-} from '../../utils/testing/customRender';
-import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { act, render, screen, waitFor } from '../../utils/testing/customRender';
+// import '@testing-library/jest-dom';
 import HomePage from './Home';
 
 // Mock AppContext
-const mockedUseAppContext = jest.fn();
-const mockedUseQuery = jest.fn();
-jest.mock('../../hooks', () => ({
+const mockedUseAppContext = vi.fn();
+const mockedUseQuery = vi.fn();
+vi.mock('../../hooks', () => ({
   useAppContext: () => mockedUseAppContext(),
   useQuery: () => mockedUseQuery(),
 }));
 
-// Mock sha256Hash
-jest.mock('@fedimint/utils', () => ({
-  ...jest.requireActual('@fedimint/utils'),
-  sha256Hash: () => 'dummy-hash-value',
-}));
+vi.mock('@fedimint/utils');
 
 describe('pages/Home', () => {
-  const mockDispatch = jest.fn();
+  const mockDispatch = vi.fn();
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    const utils = await import('@fedimint/utils');
+    utils.sha256Hash = vi.fn().mockReturnValue('dummy-hash-value');
+
     mockedUseAppContext.mockImplementation(() => ({
       service: null,
       dispatch: mockDispatch,
     }));
 
     mockedUseQuery.mockReturnValue({
-      get: jest.fn(),
+      get: vi.fn(),
     });
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('When a user clicks the connect button with an empty input value', () => {
@@ -62,7 +57,7 @@ describe('pages/Home', () => {
       render(<HomePage />);
 
       const input = screen.getByPlaceholderText(
-        'Guardian URL'
+        'home.guardian-url'
       ) as HTMLInputElement;
 
       await act(async () => {
@@ -83,7 +78,7 @@ describe('pages/Home', () => {
       render(<HomePage />);
 
       const input = screen.getByPlaceholderText(
-        'Guardian URL'
+        'home.guardian-url'
       ) as HTMLInputElement;
 
       await act(async () => {
@@ -102,7 +97,7 @@ describe('pages/Home', () => {
   describe('When there is no service in LocalStorage', () => {
     it('should render an input without a value', () => {
       render(<HomePage />);
-      const input = screen.getByPlaceholderText('Guardian URL');
+      const input = screen.getByPlaceholderText('home.guardian-url');
 
       expect(input).toBeInTheDocument();
     });
@@ -117,7 +112,7 @@ describe('pages/Home', () => {
             baseUrl: 'wss://fedimintd-l7ik.test.app:8174',
           },
         },
-        dispatch: jest.fn(),
+        dispatch: vi.fn(),
       }));
     });
 
@@ -139,7 +134,7 @@ describe('pages/Home', () => {
             baseUrl: 'https://gatewayd-1234.test.app:8175',
           },
         },
-        dispatch: jest.fn(),
+        dispatch: vi.fn(),
       }));
     });
 
@@ -155,7 +150,7 @@ describe('pages/Home', () => {
   describe('When a url is passed as a query param', () => {
     beforeEach(() => {
       mockedUseQuery.mockReturnValue({
-        get: jest.fn().mockReturnValue('wss://guardian-url.test.com:8174'),
+        get: vi.fn().mockReturnValue('wss://guardian-url.test.com:8174'),
       });
     });
 
