@@ -1,3 +1,8 @@
+> [!WARNING]  
+> This repo has been archived following the introduction of a [built-in Fedimint UI](https://github.com/fedimint/fedimint/pull/7033). The built-in UI might not be as featureful and pretty, but is easier to keep in sync with the core project.
+> 
+> [Fedi](https://github.com/fedibtc) has offered to continue maintaining the external, more featureful and polished Fedimint UI, we hence [moved the repo into their org](https://github.com/fedibtc/fedimint-ui) to preserve issues and PRs. We put a fork into the Fedimint org for historic reference.
+
 # Fedimint UI
 
 The Fedimint UI enables you to administer your Guardian from the browser. Once you're running an instance of fedimintd, you can use the UI to connect to this instance and run the setup process.
